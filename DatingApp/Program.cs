@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x =>
 x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddMvc().AddJsonOptions(x =>
+//{
+//    x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+//});
+//builder.Services.AddTransient<Seed>();
 
+//Seed seeder = new Seed();
+//builder.Services.AddAutoMapper();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+builder.Services.AddScoped<IDatingRepository, DatingRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -32,6 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         ValidateAudience = false
                     };
                 });
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -55,30 +69,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-//else
-//{
-//    app.UseExceptionHandler(builder => {
-//        builder.Run(async context => {
-//            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-//            var error = context.Features.Get<IExceptionHandlerFeature>(); // This error stores our actual server error
-
-//            if (error != null)
-//            {
-//                 //value = context.Response.AddApplicationError(error.Error.Message);
-//                await context.Response.WriteAsync(error.Error.Message);
-//            }
-
-//            // Here we are writing our error message in Http response as well
-//        });
-//    });
-//    app.UseHtt();
-//}
+//seeder.SeedUsers();
 
 app.UseHttpsRedirection();
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("Application-Error"));

@@ -11,11 +11,9 @@ namespace DatingApp.Data
         {
             _context = context;
         }
-
-
         public  async Task<User> Login(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x =>x.Username == username);
+            var user = await _context.Users.FirstOrDefaultAsync(x=>x.Username == username);
             if (user==null)
             {
                 return null;
@@ -59,7 +57,6 @@ namespace DatingApp.Data
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
