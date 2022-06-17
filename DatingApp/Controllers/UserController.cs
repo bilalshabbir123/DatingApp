@@ -12,7 +12,7 @@ using System.Text;
 
 namespace DatingApp.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
